@@ -1,0 +1,101 @@
+/* define css variable here */
+:root {
+  --blue: #00b7ff;
+  --black: black;
+  --dark-square: #b58863;
+  --light-square: #f0d9b5;
+  --white: white;
+  --chessboard-size: 90vw; /* Initial size of the chessboard relative to the viewport width */
+  --square-size: calc(var(--chessboard-size) / 8);
+  --layout-padding-inline: 2rem;
+}
+
+body {
+  width: 1080px;
+  margin: 0;
+  padding: 50px;
+  font: 14px 'Lucida Grande', Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: var(--white);
+}
+
+#sidebar {
+  background-color: var(--light-square);
+  font-size: 0.9rem;
+  padding: 10px;
+  width: 100%;
+}
+
+/* 
+#sidebar #main {
+  width: 62%;
+  padding: 10px;
+}
+
+input[type='text'] {
+  border: gray;
+  border-radius: 0.375 em;
+} */
+.chess-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.chess-board {
+  border: solid 0px var(--black);
+}
+
+.dark-square {
+  width: 3rem;
+  height: 3rem;
+  background-color: var(--dark-square);
+  position: relative; /* Set position to relative for the square */
+}
+
+.light-square {
+  width: 3rem;
+  height: 3rem;
+  background-color: var(--light-square);
+  position: relative; /* Set position to relative for the square */
+}
+
+/* Absolute positioning for the text within the square */
+.dark-square::before,
+.light-square::before {
+  content: attr(data-coordinate); /* Display the coordinate text */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-start; /* Align to the top */
+  justify-content: flex-start; /* Align to the left */
+  padding-top: 0.1rem;
+  box-sizing: border-box;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+tr,
+td {
+  padding: 0;
+}
+
+@media (max-width: 400px) {
+  :root {
+    --square-size: calc((100vw - var(--layout-padding-inline) * 2) / 8);
+  }
+}
+
+@media (orientation: landscape) {
+  :root {
+    --square-size: calc((100vh - var(--layout-padding-inline) * 2) / 8);
+  }
+}
