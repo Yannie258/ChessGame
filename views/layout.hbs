@@ -1,14 +1,61 @@
 <html>
-  <head>
-    <title>Chess Game</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <nav id='sidebar'>
-      <a href=''>Home</a>
 
-      <a href=''>News</a>
-    </nav>
-    {{{body}}}
-  </body>
+<head>
+  <title>Chess Game</title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+
+<body>
+  <script src='javascripts/renderChessBoard.js'>
+  </script>
+  <script src='javascripts/placePieces.js'>
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // get element with id = chess-container in html view
+      const chessboardContainer = document.getElementById('chess-container');
+      //The Element property innerHTML gets or
+      //sets the HTML or XML markup contained within the element. 
+      //chessboardContainer.innerHTML = renderChessBoard('white');
+
+      //-----------------------------Tutorial 3 - task 4--------------------
+      // Client accept init fen to render board 
+      //const pov = "white";
+      //const initFen= 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'; 
+      //chessboardContainer.innerHTML = renderChessBoardWithFenAndPov(initFen, pov);
+
+      //-----------------------------Tutorial 3 - task 5--------------------
+      //Client sent request pov to server     
+      const pov = "white";
+      const initFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
+
+      fetch(`/?pov=${pov}`)
+        .then(response => response.text())
+        .then(chessboardHTML => {
+
+          // chessboardHTML is response from server
+          console.log('test', chessboardHTML)
+          //const chessboardContainer = document.getElementById('chessboardContainer');
+          // client gets chessboard form server and place the pieces with fen
+          chessboardContainer.innerHTML = chessboardHTML;
+
+          // Call a function to place pieces here (not implemented in this snippet)
+          placePieces(initFen);
+        })
+        .catch(error => {
+          console.error('Error fetching chessboard:', error);
+        });
+    
+
+
+    });
+  </script>
+  <nav id='sidebar'>
+    <a href=''>Home</a>
+
+    <a href=''>News</a>
+  </nav>
+  {{{body}}}
+</body>
+
 </html>

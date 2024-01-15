@@ -6,7 +6,8 @@
   --light-square: #f0d9b5;
   --white: white;
   --chessboard-size: 90vw; /* Initial size of the chessboard relative to the viewport width */
-  --square-size: calc(var(--chessboard-size) / 8);
+  --square-size: calc(var(--chessboard-size) -100px / 8);
+  --board-size : calc(var(--square-size) * 8);
   --layout-padding-inline: 2rem;
 }
 
@@ -38,7 +39,7 @@ input[type='text'] {
   border: gray;
   border-radius: 0.375 em;
 } */
-.chess-container {
+#chess-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -47,6 +48,13 @@ input[type='text'] {
 
 .chess-board {
   border: solid 0px var(--black);
+  width          : var(--board-size);
+  height         : var(--board-size);
+  margin         : 50px auto;
+  border-collapse: collapse;
+  table-layout   : fixed;
+  /* Ensure that table layout does not change due to content */
+
 }
 
 .dark-square {
@@ -64,9 +72,8 @@ input[type='text'] {
 }
 
 /* Absolute positioning for the text within the square */
-.dark-square::before,
-.light-square::before {
-  content: attr(data-coordinate); /* Display the coordinate text */
+.chess-board td::before {
+  content: attr(id); /* Display the coordinate text */
   position: absolute;
   top: 0;
   left: 0;
@@ -77,16 +84,64 @@ input[type='text'] {
   justify-content: flex-start; /* Align to the left */
   padding-top: 0.1rem;
   box-sizing: border-box;
+  z-index: 1;
+}
+
+/* colors for the squares on the chessboard 
+* use odd/even children 
+*/
+.chess-board tr:nth-child(odd) td:nth-child(even),
+.chess-board tr:nth-child(even) td:nth-child(odd) {
+  background-color: var(--dark-square);
+}
+
+.chess-board tr:nth-child(odd) td:nth-child(odd),
+.chess-board tr:nth-child(even) td:nth-child(even) {
+  background-color: var(--light-square);
 }
 
 table {
   border-collapse: collapse;
+  width: var(--board-size);
+  height: var(--board-size);
+  margin: 50px auto;
+  table-layout: fixed; /* Ensure that table layout does not change due to content */
+
 }
 
-tr,
 td {
-  padding: 0;
+  display: table-cell;
+  position: relative;
+  width: var(--square-size);
+  height: var(--square-size);
+  min-width: var(--square-size); /* Set minimum width */
+  min-height: var(--square-size); /* Set minimum height */
+  text-align: center;
+  vertical-align: middle;
 }
+
+td::before {
+  content: attr(id);
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  font-size: 0.8em; /* Keep the number size unchanged */
+  color: #333;
+  z-index: 1;
+}
+
+
+.chess-piece {
+  font-size: 3em; /* Increase the size of the chess pieces */
+  line-height: 1em; /* Adjust line height to prevent extra vertical space */
+}
+
+/* Ensure using border-box */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+
 
 @media (max-width: 400px) {
   :root {

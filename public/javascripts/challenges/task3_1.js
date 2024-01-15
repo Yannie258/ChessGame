@@ -41,4 +41,52 @@ console.log('The sum of numbers is \n', sum(2, 5))
  * The output however, would return a flattened version of that list, namely ["a", "b", "c"]
  */
 
-function flatten(list) {}
+function flatten(list) {
+  let result = []
+  function recursiveFlatten(innerList) {
+    for (let i = 0; i < innerList.length; i++) {
+      //check if innerlist is array or not
+      // when true, then check recursive innernlist again
+      if (Array.isArray(innerList[i])) {
+        recursiveFlatten(innerList[i])
+      }
+      //when not list anymore, then push element in result array
+      else {
+        result.push(innerList[i])
+      }
+    }
+  }
+  // Start the recursion
+  recursiveFlatten(list)
+
+  return result
+}
+
+// Alternatives:
+//implicit recursive flat()
+function flattenWithFlat(list) {
+  //level of flat with depth is length of array
+  let flattenedList = list.flat(Infinity)
+  return flattenedList
+}
+
+function flattenWithRecursion(list) {
+  return list.reduce((acc, cur) => acc.concat(Array.isArray(cur) ? flattenWithRecursion(cur) : cur), [])
+}
+
+function flattenWithIterative(list) {
+  let res = []
+  for (let li of list) {
+    if (Array.isArray(li)) res.push(...flattenWithIterative(li))
+    else res.push(li)
+  }
+  return res
+}
+
+//test
+const test_list_flatten = [['a'], ['b', ['c']], ['d', ['e', ['f']]], ['g', ['h', ['i', ['k']]]]]
+const flatternList = flatten(test_list_flatten)
+console.log('flattern list : \n', flatternList)
+console.log('Flattened list with flat:', flattenWithFlat(test_list_flatten))
+console.log('Flattened list recursion:', flattenWithRecursion(test_list_flatten))
+console.log('Flattened list iteration:', flattenWithIterative(test_list_flatten))

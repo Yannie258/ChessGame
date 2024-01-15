@@ -1,87 +1,89 @@
 <h1>Chess Application</h1>
-<div class='chess-container'>
-  <table class='chess-board'>
-    <tr>
-      <td class='dark-square' data-coordinate='A8'></td>
-      <td class='light-square' data-coordinate='B8'></td>
-      <td class='dark-square' data-coordinate='C8'></td>
-      <td class='light-square' data-coordinate='D8'></td>
-      <td class='dark-square' data-coordinate='E8'></td>
-      <td class='light-square' data-coordinate='F8'></td>
-      <td class='dark-square' data-coordinate='G8'></td>
-      <td class='light-square' data-coordinate='H8'></td>
+{{!-- this id is needed in order to call it in DOM Listener --}}
+<div id='chess-container'>
+  {{!this table will be programmed from js file 
+ <table class='chess-board'>
+     <tr>
+      <td class='dark-square' id='A8'></td>
+      <td class='light-square' id='B8'></td>
+      <td class='dark-square' id='C8'></td>
+      <td class='light-square' id='D8'></td>
+      <td class='dark-square' id='E8'></td>
+      <td class='light-square' id='F8'></td>
+      <td class='dark-square' id='G8'></td>
+      <td class='light-square' id='H8'></td>
     </tr>
     <tr>
-      <td class='light-square' data-coordinate='A7'></td>
-      <td class='dark-square' data-coordinate='B7'></td>
-      <td class='light-square' data-coordinate='C7'></td>
-      <td class='dark-square' data-coordinate='D7'></td>
-      <td class='light-square' data-coordinate='E7'></td>
-      <td class='dark-square' data-coordinate='F7'></td>
-      <td class='light-square' data-coordinate='G7'></td>
-      <td class='dark-square' data-coordinate='H7'></td>
+      <td class='light-square' id='A7'></td>
+      <td class='dark-square' id='B7'></td>
+      <td class='light-square' id='C7'></td>
+      <td class='dark-square' id='D7'></td>
+      <td class='light-square' id='E7'></td>
+      <td class='dark-square' id='F7'></td>
+      <td class='light-square' id='G7'></td>
+      <td class='dark-square' id='H7'></td>
     </tr>
     <tr>
-      <td class='dark-square' data-coordinate='A6'></td>
-      <td class='light-square' data-coordinate='B6'></td>
-      <td class='dark-square' data-coordinate='C6'></td>
-      <td class='light-square' data-coordinate='D6'></td>
-      <td class='dark-square' data-coordinate='E6'></td>
-      <td class='light-square' data-coordinate='F6'></td>
-      <td class='dark-square' data-coordinate='G6'></td>
-      <td class='light-square' data-coordinate='H6'></td>
+      <td class='dark-square' id='A6'></td>
+      <td class='light-square' id='B6'></td>
+      <td class='dark-square' id='C6'></td>
+      <td class='light-square' id='D6'></td>
+      <td class='dark-square' id='E6'></td>
+      <td class='light-square' id='F6'></td>
+      <td class='dark-square' id='G6'></td>
+      <td class='light-square' id='H6'></td>
     </tr>
     <tr>
-      <td class='light-square' data-coordinate='A5'></td>
-      <td class='dark-square' data-coordinate='B5'></td>
-      <td class='light-square' data-coordinate='C5'></td>
-      <td class='dark-square' data-coordinate='D5'></td>
-      <td class='light-square' data-coordinate='E5'></td>
-      <td class='dark-square' data-coordinate='F5'></td>
-      <td class='light-square' data-coordinate='G5'></td>
-      <td class='dark-square' data-coordinate='H5'></td>
-    </tr>
-
-    <tr>
-      <td class='dark-square' data-coordinate='A4'></td>
-      <td class='light-square' data-coordinate='B4'></td>
-      <td class='dark-square' data-coordinate='C4'></td>
-      <td class='light-square' data-coordinate='D4'></td>
-      <td class='dark-square' data-coordinate='E4'></td>
-      <td class='light-square' data-coordinate='F4'></td>
-      <td class='dark-square' data-coordinate='G4'></td>
-      <td class='light-square' data-coordinate='H4'></td>
-    </tr>
-    <tr>
-      <td class='light-square' data-coordinate='A3'></td>
-      <td class='dark-square' data-coordinate='B3'></td>
-      <td class='light-square' data-coordinate='C3'></td>
-      <td class='dark-square' data-coordinate='D3'></td>
-      <td class='light-square' data-coordinate='E3'></td>
-      <td class='dark-square' data-coordinate='F3'></td>
-      <td class='light-square' data-coordinate='G3'></td>
-      <td class='dark-square' data-coordinate='H3'></td>
-    </tr>
-    <tr>
-      <td class='dark-square' data-coordinate='A2'></td>
-      <td class='light-square' data-coordinate='B2'></td>
-      <td class='dark-square' data-coordinate='C2'></td>
-      <td class='light-square' data-coordinate='D2'></td>
-      <td class='dark-square' data-coordinate='E2'></td>
-      <td class='light-square' data-coordinate='F2'></td>
-      <td class='dark-square' data-coordinate='G2'></td>
-      <td class='light-square' data-coordinate='H2'></td>
-    </tr>
-    <tr>
-      <td class='light-square' data-coordinate='A1'></td>
-      <td class='dark-square' data-coordinate='B1'></td>
-      <td class='light-square' data-coordinate='C1'></td>
-      <td class='dark-square' data-coordinate='D1'></td>
-      <td class='light-square' data-coordinate='E1'></td>
-      <td class='dark-square' data-coordinate='F1'></td>
-      <td class='light-square' data-coordinate='G1'></td>
-      <td class='dark-square' data-coordinate='H1'></td>
+      <td class='light-square' id='A5'></td>
+      <td class='dark-square' id='B5'></td>
+      <td class='light-square' id='C5'></td>
+      <td class='dark-square' id='D5'></td>
+      <td class='light-square' id='E5'></td>
+      <td class='dark-square' id='F5'></td>
+      <td class='light-square' id='G5'></td>
+      <td class='dark-square' id='H5'></td>
     </tr>
 
-  </table>
+    <tr>
+      <td class='dark-square' id='A4'></td>
+      <td class='light-square' id='B4'></td>
+      <td class='dark-square' id='C4'></td>
+      <td class='light-square' id='D4'></td>
+      <td class='dark-square' id='E4'></td>
+      <td class='light-square' id='F4'></td>
+      <td class='dark-square' id='G4'></td>
+      <td class='light-square' id='H4'></td>
+    </tr>
+    <tr>
+      <td class='light-square' id='A3'></td>
+      <td class='dark-square' id='B3'></td>
+      <td class='light-square' id='C3'></td>
+      <td class='dark-square' id='D3'></td>
+      <td class='light-square' id='E3'></td>
+      <td class='dark-square' id='F3'></td>
+      <td class='light-square' id='G3'></td>
+      <td class='dark-square' id='H3'></td>
+    </tr>
+    <tr>
+      <td class='dark-square' id='A2'></td>
+      <td class='light-square' id='B2'></td>
+      <td class='dark-square' id='C2'></td>
+      <td class='light-square' id='D2'></td>
+      <td class='dark-square' id='E2'></td>
+      <td class='light-square' id='F2'></td>
+      <td class='dark-square' id='G2'></td>
+      <td class='light-square' id='H2'></td>
+    </tr>
+    <tr>
+      <td class='light-square' id='A1'></td>
+      <td class='dark-square' id='B1'></td>
+      <td class='light-square' id='C1'></td>
+      <td class='dark-square' id='D1'></td>
+      <td class='light-square' id='E1'></td>
+      <td class='dark-square' id='F1'></td>
+      <td class='light-square' id='G1'></td>
+      <td class='dark-square' id='H1'></td>
+    </tr>
+
+  </table> }}
 </div>
