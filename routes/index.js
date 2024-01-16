@@ -34,8 +34,18 @@ app.use(express.static('public'))
 // router.get('/', function(req, res, next) {
 //   res.render('index', { title: 'International Chess' });
 // });
+router.get('/chessBoard', function (req, res, next) {
+  res.setHeader('Cache-Control', 'no-store')
+
+  console.log("res",res);
+  console.log(req);
+  //index.hbs
+  res.render('index')
+})
 
 router.get('/', function (req, res) {
+  res.setHeader('Cache-Control', 'no-store')
+
   const pov = req.query.pov || 'white' // Default to 'white' POV if not specified
   console.log(pov)
 
@@ -43,12 +53,11 @@ router.get('/', function (req, res) {
   const chessboardHTML = renderChessboardWithPov(pov)
 
   // Send the generated chessboard HTML to the client
+  //just sent, not render
   res.send(chessboardHTML)
 })
 
-router.get('/chessBoard', function (req, res, next) {
-  res.render('index', { title: 'International Chess' })
-})
+
 
 
 module.exports = router
