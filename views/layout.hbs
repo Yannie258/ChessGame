@@ -6,9 +6,10 @@
 </head>
 
 <body>
-  <script src='javascripts/renderChessBoard.js'>
-  </script>
+  
   <script src='javascripts/placePieces.js'>
+  </script>
+  <script src='javascripts/renderChessBoard.js'>
   </script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -26,7 +27,7 @@
 
       //-----------------------------Tutorial 3 - task 5--------------------
       //Client sent request pov to server     
-      const pov = "white";
+      const pov = 'black';
       const initFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
 
       fetch(`/?pov=${pov}`)
@@ -34,7 +35,7 @@
         .then(chessboardHTML => {
 
           // chessboardHTML is response from server
-          console.log('test', chessboardHTML)
+          //console.log('test', chessboardHTML)
           //const chessboardContainer = document.getElementById('chessboardContainer');
           // client gets chessboard form server and place the pieces with fen
           chessboardContainer.innerHTML = chessboardHTML;

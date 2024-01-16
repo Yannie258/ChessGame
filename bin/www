@@ -2,6 +2,8 @@
 
 /**
  * Module dependencies.
+ * set up express
+ * www server for nodejs
  */
 
 var app = require('../app');
