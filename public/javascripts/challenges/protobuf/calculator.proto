@@ -1,0 +1,61 @@
+syntax = "proto3";
+/*
+ * Web Service that provides the functionality of a calculator 
+ * Basic math operations
+ * math expressions
+ * the math equations
+*/ 
+
+
+package CalculatorService;
+
+// math operation
+// will be request from client
+message MathExpression {
+  string expression = 1;
+}
+
+// result should be the response from server
+message CalculationResult {
+  oneof result {
+    double double_result = 2;
+    int64 int_result = 3;
+    string error_message = 4;
+  }
+}
+
+message FunctionRequest{
+    string functionName = 1;
+    repeated string argumentName =2;
+    string equation = 3;
+}
+
+message FunctionResponse{
+    bool isSuccess= 1;
+    string errorMas = 2;
+}
+
+enum OperationType{
+    ADD = 0;
+    SUB= 1;
+    MUL= 3;
+    DIV= 4;
+    NEGATION = 5;
+}
+
+message ExpressionParse{
+    OperationType opType = 1;
+    repeated int64 children = 2;
+}
+
+//Abstract Syntax Tree
+message ASTRoot{
+    repeated ExpressionParse = 1;
+    int64 rootNodeIndex = 2;
+}
+
+service Calculator {
+  rpc Calculate(MathExpression) returns (CalculationResult);
+  rpc ParseEquation(ExpressionParse) returns (CalculationResult);
+  rpc ApplyFunction(FunctionRequest) returns (FunctionResponse);
+}
