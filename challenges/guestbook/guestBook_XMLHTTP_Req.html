@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="de-DE">
+    <head>
+        <meta charset="UTF-8" />
+        <style>
+            body {
+                font: 15px normal Arial, sans-serif;
+                color: #000000;
+            }
+            label {
+                width: 5em;
+                display: inline-block;
+            }
+            ul {
+                padding: 0;
+            }
+        </style>
+        <script>
+            function displayAllEntries(entries) {
+            const guestbookList = document.querySelector('ul');
+            guestbookList.innerHTML = "";
+            for (let i = 0; i < entries.length; i++) {
+                const listItem = document.createElement("li");
+                listItem.innerHTML = `<b>${entries[i].name}</b> ${entries[i].text} <a href="#" onclick="deleteEntry(${entries[i].id},event)">(X)</a>`
+
+                guestbookList.appendChild(listItem);
+            }
+            // or use foreach
+            // entries.forEach(entry => {
+            //     const listItem = document.createElement("li");
+            //     listItem.innerHTML = `<b>${entry.name}:</b> ${entry.text} <a href="#" onclick="deleteEntry(${entry.id},event)">(X)</a>`;
+            //     guestbookList.appendChild(listItem);
+            // });
+
+        }
+        function loadEntries() {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // console.log(xhr.responseText);
+                    const resObj = JSON.parse(xhr.responseText);
+                    console.log(resObj);
+                    displayAllEntries(resObj);
+                }
+            }
+
+            xhr.open('GET', 'https://vsr.informatik.tu-chemnitz.de/edu/evs/ajax/guestbook', true); // third parameter means the request should be asynchronous or not
+            xhr.send();
+        }
+        // delete single entry
+        function deleteEntry(entryId, event) {
+            // debugger
+            // create xmlhttpreq
+            const xhr = new XMLHttpRequest();
+
+            //action when we receive response from server
+            // this function will be called when load res finished
+            xhr.onload = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    const resObj = JSON.parse(xhr.responseText);
+                    console.log("delete", resObj);
+                    loadEntries();
+                }
+            }
+
+            // send request to server
+            xhr.open('DELETE', `https://vsr.informatik.tu-chemnitz.de/edu/evs/ajax/guestbook?id=${entryId}`, true);
+            xhr.send();
+        }
+
+        //add new entry
+        function addEntry() {
+            let nameInput = document.getElementById("name");
+            let textInput = document.getElementById("text");
+            let name = nameInput.value;
+            let text = textInput.value;
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    const resObj = JSON.parse(xhr.responseText);
+                    console.log("add", resObj);
+                    loadEntries();
+                    // Clear input fields
+                    //name and text are strings, not references to the input elements.
+                    nameInput.value = '';
+                    textInput.value = '';
+                }
+
+            }
+            //POST /guestbook: Adds a new entry to the guestbook. Parameters include name and text. Data in the body must be URL encoded!
+            xhr.open('POST', "https://vsr.informatik.tu-chemnitz.de/edu/evs/ajax/guestbook", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+            //sent req with specific contents in secure way, without this , then error
+            xhr.send(`name=${encodeURIComponent(name)}&text=${encodeURIComponent(text)}`);
+        }
+
+
+        document.addEventListener("DOMContentLoaded", loadEntries)
+
+        </script>
+    </head>
+    <body>
+        <h1>Guestbook</h1>
+        <ul>
+            <li><b>TestUser:</b> This is an example entry. <a href="#" alt="Delete entry">(X)</a></li>
+            <li><b>TestUser2:</b> This is another example entry. <a href="#" alt="Delete entry">(X)</a></li>
+        </ul>
+        <hr>
+        <form method="POST" action="https://vsr.informatik.tu-chemnitz.de/edu/evs/ajax/guestbook" onsubmit="addEntry();return false;">
+                <label for="name">Name</label> <input id="name" type="text" name="name" placeholder="Name"><br>
+                <label for="text">Text</label> <input id="text" type="text" name="text" placeholder="Text"><br>
+                <button type="submit">Add entry</button>
+        </form>
+    </body>
+</html>

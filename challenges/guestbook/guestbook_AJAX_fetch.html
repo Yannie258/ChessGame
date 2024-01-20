@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="de-DE">
+
+<head>
+    <meta charset="UTF-8" />
+    <style>
+        body {
+            font: 15px normal Arial, sans-serif;
+            color: #000000;
+        }
+
+        label {
+            width: 5em;
+            display: inline-block;
+        }
+
+        ul {
+            padding: 0;
+        }
+    </style>
+    <script>
+        //use async function/await fetch or fetch...then
+        //1. Upon loading the page, display all existing entries.
+        //async/await:
+        async function loadEntries() {
+            let response = await fetch('https://vsr.informatik.tu-chemnitz.de/edu/evs/ajax/guestbook')
+            if (response.ok) {
+                let result = await response.json()
+                const guestList = document.querySelector('ul');
+                guestList.innerHTML = '';
+                result.forEach(element => {
+                    const listItem = document.createElement("li");
+                    listItem.innerHTML = `<b>${element.name}:</b> ${element.text} <a href="#" onclick="deleteEntry(${element.id},event)>(X)</a>`;
+                    guestList.appendChild(listItem);
+
+                })
+                console.log('res', result)
+            } else {
+                alert(response.status)
+            }
+        }
+
+        //fetch...then
+        async function loadDynamicEntry() {
+            const guestbookList = document.querySelector('ul')
+            guestbookList.innerHTML = ''
+            fetch('https://vsr.informatik.tu-chemnitz.de/edu/evs/ajax/guestbook', {
+                method: 'GET',
+            })
+                .then(res => {
+                    //console.log(res.json()) // json() can be called just one time
+                    return res.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    data.forEach(element => {
+                        const listItem = document.createElement("li");
+                        listItem.innerHTML = `<b>${element.name}:</b> ${element.text} <a href="#" onclick="deleteEntry(${element.id},event)">(X)</a>`;
+                        guestbookList.appendChild(listItem);
+                    })
+
+                })
+                .catch(e => console.log(e))
+
+        }
+
+        // 2. Allow users to delete a single entry by clicking on a delete link.
+        async function deleteEntry(entryId, event) {
+            try {
+                const response = await fetch(`https://vsr.informatik.tu-chemnitz.de/edu/evs/ajax/guestbook?id=${entryId}`, {
+                    method: 'DELETE',
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                console.log(data);
+
+                // Assuming loadDynamicEntry and loadEntries are asynchronous functions
+                //await loadDynamicEntry();
+                await loadEntries();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // 3. Enable users to add a new entry using the existing form elements.
+       
+        async function addEntry() {
+            try {
+                const nameInput = document.getElementById("name");
+                const textInput = document.getElementById("text");
+                const name = nameInput.value;
+                const text = textInput.value;
+
+                const response = await fetch(`https://vsr.informatik.tu-chemnitz.de/edu/evs/ajax/guestbook`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `name=${encodeURIComponent(name)}&text=${encodeURIComponent(text)}`
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                console.log(data);
+
+                // Assuming loadAllEntries is an asynchronous function
+                await loadEntries();
+
+                nameInput.value = '';
+                textInput.value = '';
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // Display the new entry instantly without requiring a page reload.
+        //document.addEventListener('DOMContentLoaded', loadDynamicEntry)
+         document.addEventListener('DOMContentLoaded', loadEntries)
+    </script>
+</head>
+
+<body>
+    <h1>Guestbook</h1>
+    <ul>
+        <li><b>TestUser:</b> This is an example entry. <a href="#" alt="Delete entry">(X)</a></li>
+        <li><b>TestUser2:</b> This is another example entry. <a href="#" alt="Delete entry">(X)</a></li>
+    </ul>
+    <hr />
+    <form method="POST" action="https://vsr.informatik.tu-chemnitz.de/edu/evs/ajax/guestbook"
+        onsubmit="addEntry();return false;">
+        <label for="name">Name</label> <input id="name" type="text" name="name" placeholder="Name" /><br />
+        <label for="text">Text</label> <input id="text" type="text" name="text" placeholder="Text" /><br />
+        <button type="submit">Add entry</button>
+    </form>
+</body>
+
+</html>
