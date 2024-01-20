@@ -24,3 +24,9 @@ function renderChessBoard(pov) {
   chessBoard += `</table>` // close tag table
   return chessBoard
 }
+
+
+
+
+//need to module in order use require in express nodejs
+module.exports = {renderChessBoard}
