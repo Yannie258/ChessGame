@@ -12,7 +12,7 @@ var packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   defaults: true,
   oneofs: true,
 })
-let moveGenDef = grpc.loadPackageDefinition(move_generator).move_generator;
+let moveGenDef = grpc.loadPackageDefinition(packageDefinition).move_generator
 
 //create a stub
 let grpcClient = new moveGenDef.MoveGenerator(

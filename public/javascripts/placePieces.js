@@ -28,7 +28,6 @@ function placePieces(fen) {
   for (let i = 0; i < boardSize; i++) {
     const singleRow = fenRow[i]
     //console.log('singleRow:', singleRow)
-    //chessBoard += `<tr>`
     //rotate the board when change pov
     let rowIndex = boardSize - i
     //cut fenRow to get single pieces
@@ -39,24 +38,21 @@ function placePieces(fen) {
     for (let j = 0; j < boardSize; j++) {
       const cell = singleCell[j]
       const singleCellt = singleCell[j]
-      //check if in every cell contains character or not
-      //when yes, then map to pieces, else do nothing
       let piece = cell.match(/[prnbqkPRNBQK]/) ? getSinglePiece(cell) : ''
-      //render id / coordination for square
-      //chessBoard += `<td id=${cols[j]}${rowIndex}>${piece}</td>`
       const setPieces = document.getElementById(`${cols[j]}${rowIndex}`)
       setPieces.innerHTML = piece
-      }
-      
-    // chessBoard += `</tr>` // close a tr block
     }
-    const chessPieces = document.querySelectorAll('.chess-piece')
-    chessPieces.forEach((piece) => {
-      piece.addEventListener('click', (event) => handlePieceClick(event, piece.parentElement.id))
-    })
-  //chessBoard += `</table>` // close tag table
-  //splitPieces(fen)
-  //return chessBoard
+  }
+
+  // listen click event in whole table
+  // important when we move to the possible position later on
+  const chessBoard = document.querySelectorAll('.chess-board')
+  //console.log('[.chess-board]', chessBoard)
+  // Variable to keep track of the currently clicked cell
+  let currentClickedCell = null
+  chessBoard.forEach((cell) => {
+    handleCellClick(cell, currentClickedCell)
+  })
 }
 
 //expand amount of consecate empty cells based on number
@@ -71,18 +67,43 @@ function getSinglePiece(char) {
     : ''
 }
 
-function handlePieceClick(event, pos) { 
-    console.log("event",event);
-    console.log("pos",pos);
+function handleCellClick(cell, currentClickedCell) {
+  cell.addEventListener('click', (event) => {
+    const clickedCell = event.target.closest('td')
+    console.log('Click on cell', clickedCell)
+
+    if (currentClickedCell) {
+      // Remove styling from the previously clicked cell
+      removeHighlight(currentClickedCell)
+    }
+
+    // Check if the clickedCell is not null
+    if (clickedCell) {
+      const pos = clickedCell.querySelector('span')
+
+      if (pos) {
+        // Code for handling clicks on pos
+        console.log('Click on piece', pos)
+        addHighlight(clickedCell)
+      } else {
+        // Code for handling clicks on empty cells
+        console.log('Click on empty cell', clickedCell)
+        
+      }
+
+      // Update the currently clicked cell
+      currentClickedCell = clickedCell
+    }
+  })
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  //TODO: how to get the event when click to piece?
-    document.querySelector('.chess-board').addEventListener('click', async (event) => {
-      //The closest() method searches up the DOM tree for elements which matches a specified CSS selector.
-      //starts at the element itself, then the anchestors (parent, grandparent, ...) until a match is found.
-      //const pressedCell = event.target.closest('td')
-      console.group('[.chess-table click]', pressedCell)
-    })
-})
+// Function to add highlighting to the cell
+function addHighlight(cell) {
+  console.log('cell', cell)
+  cell.classList.add('highlight-overlay')
+}
 
+// Function to remove highlighting from the cell
+function removeHighlight(cell) {
+  cell.classList.remove('highlight-overlay')
+}
