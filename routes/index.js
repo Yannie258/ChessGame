@@ -34,7 +34,4 @@ router.get('/', function (req, res) {
   res.send(chessboardHTML)
 })
 
-
-
-
 module.exports = router

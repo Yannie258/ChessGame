@@ -87,7 +87,7 @@ function handleCellClick(cell, currentClickedCell) {
         addHighlight(clickedCell)
 
         // Make a GET request to the server when a piece is clicked
-        const response = await fetch('/possibleMoves')
+        const response = await fetch('/chessboard/possibleMoves')
         const data = await response.json() // Assuming the response is in JSON format
 
         //Assuming the response contains an array of possible moves
