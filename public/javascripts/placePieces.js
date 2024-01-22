@@ -68,7 +68,7 @@ function getSinglePiece(char) {
 }
 
 function handleCellClick(cell, currentClickedCell) {
-  cell.addEventListener('click', (event) => {
+  cell.addEventListener('click', async (event) => {
     const clickedCell = event.target.closest('td')
     console.log('Click on cell', clickedCell)
 
@@ -85,6 +85,15 @@ function handleCellClick(cell, currentClickedCell) {
         // Code for handling clicks on pos
         console.log('Click on piece', pos)
         addHighlight(clickedCell)
+
+        // Make a GET request to the server when a piece is clicked
+        const response = await fetch('/possibleMoves')
+        const data = await response.json() // Assuming the response is in JSON format
+
+        //Assuming the response contains an array of possible moves
+        const possibleMoves = data.possible_moves
+        console.log('possible move', possibleMoves)
+
       } else {
         // Code for handling clicks on empty cells
         console.log('Click on empty cell', clickedCell)
@@ -99,7 +108,7 @@ function handleCellClick(cell, currentClickedCell) {
 
 // Function to add highlighting to the cell
 function addHighlight(cell) {
-  console.log('cell', cell)
+ // console.log('cell', cell)
   cell.classList.add('highlight-overlay')
 }
 

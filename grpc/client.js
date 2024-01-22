@@ -60,9 +60,20 @@ function play(current_board) {
   })
 }
 
-function getPossibleMoves(move) {
+// message GetPossibleMovesRequest
+// {
+//   Board current_board = 1;
+//   Square from = 2; 
+// }
+
+// message GetPossibleMovesResponse
+// {
+//   repeated Move possible_moves = 1;
+// }
+
+function getPossibleMoves(currFen, pos) {
   return new Promise((resolve, reject) => {
-    grpcClient.play({ current_board, from }, (err, response) => {
+    grpcClient.getPossibleMoves({ current_board: currFen, from: pos }, (err, response) => {
       if (err) {
         console.error('[getPossibleMove]', err)
         reject(err)
@@ -71,6 +82,7 @@ function getPossibleMoves(move) {
     })
   })
 }
+
 
 module.exports = {
   grpcClient,

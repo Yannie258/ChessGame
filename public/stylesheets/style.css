@@ -9,6 +9,7 @@
   --square-size: calc(var(--chessboard-size) -100px / 8);
   --board-size : calc(var(--square-size) * 8);
   --layout-padding-inline: 2rem;
+  --piece-high-light: #a6f2db;
 }
 
 body {
@@ -145,8 +146,8 @@ td::before {
 
 /* TODO: how to set background color not cover the piece? */
 .highlight-overlay {
-  background-color: var(--black) !important;
-  opacity: 0.4;
+  background-color: var(--piece-high-light) !important;
+  opacity: 0.9;
   z-index: -1;
   pointer-events: none; /* Allow clicks to pass through */
 }
