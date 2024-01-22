@@ -2,6 +2,7 @@ var express = require('express')
 var router = express.Router()
 const app = express()
 const gameLogic = require('../public/javascripts/renderChessBoard')
+// const grpcClient = require('../grpc/client')
 
 app.use(express.static('public'))
 
@@ -19,7 +20,7 @@ router.get('/chessBoard', function (req, res, next) {
 /* GET home page. */
 
 router.get('/', function (req, res) {
-  res.setHeader('Cache-Control', 'no-store')
+res.setHeader('Cache-Control', 'no-store')
 
   // get {pov} from client
   // Default  POV = 'white' if user does not provide
@@ -33,5 +34,36 @@ router.get('/', function (req, res) {
   //just send, not render
   res.send(chessboardHTML)
 })
+
+/* POST possible move from extern server */
+router.post('/chessBoard/possibleMoves', function (req, res, next) {
+  // send request body with pos is data we need to check
+  //const fen = req.body.fen
+   //const position = req.body.pos
+  //shorthand:
+  const { fen, pos } = req.body
+  console.log('get fen from client', {fen,pos})
+   res.setHeader('Cache-Control', 'no-store')  
+  // should call grpc here to get real possible moves from extern server
+  //TODO: can not get data from server
+  //sth went wrong here
+  // error 500
+  grpcClient.getPossibleMoves({ current_board: fen, from: pos }, (err, grpcResponse) => {
+    if (err) {
+      console.err('Error:', err)
+      res.status(500).send('Internal Server Error')
+    } else {
+      console.log('Response from gRPC server:', grpcResponse)
+      res.json({ from: from, possible_moves: possible_moves })
+    }
+    
+    // message GetPossibleMovesResponse{repeated Move possible_moves = 1;}
+    //res.json({ current_pos: pos, possible_moves: possible_moves })
+ 
+  })
+
+    //res.json({ current_pos: pos, possible_moves: pos })
+})
+
 
 module.exports = router

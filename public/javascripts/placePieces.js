@@ -51,7 +51,7 @@ function placePieces(fen) {
   // Variable to keep track of the currently clicked cell
   let currentClickedCell = null
   chessBoard.forEach((cell) => {
-    handleCellClick(cell, currentClickedCell)
+    handleCellClick(cell, currentClickedCell, fen)
   })
 }
 
@@ -67,7 +67,7 @@ function getSinglePiece(char) {
     : ''
 }
 
-function handleCellClick(cell, currentClickedCell) {
+function handleCellClick(cell, currentClickedCell, fen) {
   cell.addEventListener('click', async (event) => {
     const clickedCell = event.target.closest('td')
     console.log('Click on cell', clickedCell)
@@ -83,16 +83,25 @@ function handleCellClick(cell, currentClickedCell) {
 
       if (pos) {
         // Code for handling clicks on pos
-        console.log('Click on piece', pos)
+        //console.log('Click on piece', pos)
+        const cellId = clickedCell.getAttribute('id')
+        console.log('from', cellId)
         addHighlight(clickedCell)
 
-        // Make a GET request to the server when a piece is clicked
-        const response = await fetch('/chessboard/possibleMoves')
+        // Make a POST request to the server when a piece is clicked
+        const response = await fetch('/chessboard/possibleMoves', {
+          method: 'POST',
+          headers: {
+            'Content-Type':'application/json'
+          },
+          body: JSON.stringify({fen: fen, pos: cellId})
+        })
         const data = await response.json() // Assuming the response is in JSON format
+        console.log("response from server: ", data)
 
         //Assuming the response contains an array of possible moves
-        const possibleMoves = data.possible_moves
-        console.log('possible move', possibleMoves)
+        //const possibleMoves = data.possible_moves
+       // console.log('possible move', possibleMoves)
 
       } else {
         // Code for handling clicks on empty cells
