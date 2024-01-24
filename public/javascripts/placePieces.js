@@ -47,11 +47,12 @@ function placePieces(fen) {
   // listen click event in whole table
   // important when we move to the possible position later on
   const chessBoard = document.querySelectorAll('.chess-board')
-  //console.log('[.chess-board]', chessBoard)
+
   // Variable to keep track of the currently clicked cell
   let currentClickedCell = null
   chessBoard.forEach((cell) => {
     handleCellClick(cell, currentClickedCell, fen)
+    
   })
 }
 
@@ -70,11 +71,13 @@ function getSinglePiece(char) {
 function handleCellClick(cell, currentClickedCell, fen) {
   cell.addEventListener('click', async (event) => {
     const clickedCell = event.target.closest('td')
-    console.log('Click on cell', clickedCell)
+    
 
     if (currentClickedCell) {
       // Remove styling from the previously clicked cell
       removeHighlight(currentClickedCell)
+      removePossibleHighlight()
+
     }
 
     // Check if the clickedCell is not null
@@ -88,7 +91,68 @@ function handleCellClick(cell, currentClickedCell, fen) {
         console.log('from', cellId)
         addHighlight(clickedCell)
 
-        // Make a POST request to the server when a piece is clicked
+        const response = await fetch('/chessboard/possibleMoves', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ fen: fen, pos: cellId }),
+        })
+        const data = await response.json() // Assuming the response is in JSON format
+        // response from server:
+        // {
+        //   "possible_moves": [
+        // {
+        //     "board_before_move": {
+        //         "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+        //     },
+        const highLightArr = data.possible_moves.map((move) => move.to)
+        console.log('possible move', highLightArr)
+        for (let i = 0; i < highLightArr.length; i++) {
+          console.log('arr', highLightArr[i])
+          addPossibleHighLight(document.getElementById(highLightArr[i]))
+        }
+        
+        //Assuming the response contains an array of possible moves
+        //const possibleMoves = data.possible_moves
+        // console.log('possible move', possibleMoves)
+
+      } else {
+        // Code for handling clicks on empty cells
+        console.log('Click on empty cell', clickedCell)
+        
+      }
+  
+      // Update the currently clicked cell and high light cell
+      currentClickedCell = clickedCell
+    }
+  })
+}
+
+// Function to add highlighting to the cell
+function addHighlight(cell) {
+ console.log('cell', cell)
+  cell.classList.add('highlight-overlay')
+}
+
+// Function to remove highlighting from the cell
+function removeHighlight(cell) {
+  cell.classList.remove('highlight-overlay')
+}
+
+function addPossibleHighLight(cell) {
+  cell.classList.add('highlight-overlay-move')
+}
+
+function removePossibleHighlight() {
+  //cell.classList.remove('highlight-overlay-move')
+  document.querySelectorAll('.highlight-overlay-move').forEach((cell) => {
+    cell.classList.remove('highlight-overlay-move')
+  })
+}
+
+async function sendRequestGetPossibleMoves(fen,cellId){
+  // Make a POST request to the server when a piece is clicked
         const response = await fetch('/chessboard/possibleMoves', {
           method: 'POST',
           headers: {
@@ -97,31 +161,20 @@ function handleCellClick(cell, currentClickedCell, fen) {
           body: JSON.stringify({fen: fen, pos: cellId})
         })
         const data = await response.json() // Assuming the response is in JSON format
-        console.log("response from server: ", data)
-
-        //Assuming the response contains an array of possible moves
-        //const possibleMoves = data.possible_moves
-       // console.log('possible move', possibleMoves)
-
-      } else {
-        // Code for handling clicks on empty cells
-        console.log('Click on empty cell', clickedCell)
+        // response from server: 
+        // {
+        //   "possible_moves": [
+        // {
+        //     "board_before_move": {
+        //         "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+        //     },
+        //console.log("response from server: ", data )
+        const highLightArr = data.possible_moves.map((move) => move.to)
+        console.log('possible move', highLightArr)
+        for (let i = 0; i < highLightArr.length; i++){
+          console.log('arr', highLightArr[i])
+          addPossibleHighLight(document.getElementById(highLightArr[i]))
+        }
         
-      }
 
-      // Update the currently clicked cell
-      currentClickedCell = clickedCell
-    }
-  })
-}
-
-// Function to add highlighting to the cell
-function addHighlight(cell) {
- // console.log('cell', cell)
-  cell.classList.add('highlight-overlay')
-}
-
-// Function to remove highlighting from the cell
-function removeHighlight(cell) {
-  cell.classList.remove('highlight-overlay')
 }

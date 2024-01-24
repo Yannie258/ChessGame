@@ -16,7 +16,7 @@ let moveGenDef = grpc.loadPackageDefinition(packageDefinition).move_generator
 
 //create a stub
 let grpcClient = new moveGenDef.MoveGenerator(
-    "vsrstud02.informatik.tu chemnitz.de:50051",
+    "vsrstud02.informatik.tu-chemnitz.de:50051",
     grpc.credentials.createInsecure()
 );
 
@@ -82,7 +82,16 @@ function getPossibleMoves(currFen, pos) {
     })
   })
 }
-
+// alternative: send request with fetch 
+// async function getPossibleMoves(fen, pos) {
+//   try {
+//     const data = await grpcClient.getPossibleMoves(fen, pos);
+//     console.log('data client', data)
+//   } catch (err) {
+//     console.log('something went wrong')
+//   }
+ 
+// }
 
 module.exports = {
   grpcClient,

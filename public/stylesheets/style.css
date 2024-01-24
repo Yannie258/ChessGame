@@ -10,6 +10,7 @@
   --board-size : calc(var(--square-size) * 8);
   --layout-padding-inline: 2rem;
   --piece-high-light: #a6f2db;
+  --move-high-light: #FF6868;
 }
 
 body {
@@ -147,6 +148,13 @@ td::before {
 /* TODO: how to set background color not cover the piece? */
 .highlight-overlay {
   background-color: var(--piece-high-light) !important;
+  opacity: 0.9;
+  z-index: -1;
+  pointer-events: none; /* Allow clicks to pass through */
+}
+
+.highlight-overlay-move{
+  background-color: var(--move-high-light) !important;
   opacity: 0.9;
   z-index: -1;
   pointer-events: none; /* Allow clicks to pass through */
