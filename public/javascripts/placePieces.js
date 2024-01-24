@@ -52,7 +52,6 @@ function placePieces(fen) {
   let currentClickedCell = null
   chessBoard.forEach((cell) => {
     handleCellClick(cell, currentClickedCell, fen)
-    
   })
 }
 
@@ -63,75 +62,64 @@ function emptyCell(cell) {
 }
 
 function getSinglePiece(char) {
-  return char !== ''
-    ? `<span class="chess-piece">${encodeFen[char]}</span>`
-    : ''
+  return char !== '' ? `<span class="chess-piece">${encodeFen[char]}</span>` : ''
 }
 
 function handleCellClick(cell, currentClickedCell, fen) {
-  cell.addEventListener('click', async (event) => {
-    const clickedCell = event.target.closest('td')
-    
+  return new Promise((resolve, reject) => {
+    cell.addEventListener('click', async (event) => {
+      const clickedCell = event.target.closest('td')
 
-    if (currentClickedCell) {
-      // Remove styling from the previously clicked cell
-      removeHighlight(currentClickedCell)
-      removePossibleHighlight()
-
-    }
-
-    // Check if the clickedCell is not null
-    if (clickedCell) {
-      const pos = clickedCell.querySelector('span')
-
-      if (pos) {
-        // Code for handling clicks on pos
-        //console.log('Click on piece', pos)
-        const cellId = clickedCell.getAttribute('id')
-        console.log('from', cellId)
-        addHighlight(clickedCell)
-
-        const response = await fetch('/chessboard/possibleMoves', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ fen: fen, pos: cellId }),
-        })
-        const data = await response.json() // Assuming the response is in JSON format
-        // response from server:
-        // {
-        //   "possible_moves": [
-        // {
-        //     "board_before_move": {
-        //         "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-        //     },
-        const highLightArr = data.possible_moves.map((move) => move.to)
-        console.log('possible move', highLightArr)
-        for (let i = 0; i < highLightArr.length; i++) {
-          console.log('arr', highLightArr[i])
-          addPossibleHighLight(document.getElementById(highLightArr[i]))
-        }
+      //TODO: soth went wrong when click on cell , which is on highlight, just print out the old pos
+      if (currentClickedCell) {
         
-        //Assuming the response contains an array of possible moves
-        //const possibleMoves = data.possible_moves
-        // console.log('possible move', possibleMoves)
-
-      } else {
-        // Code for handling clicks on empty cells
-        console.log('Click on empty cell', clickedCell)
-        
+        console.log('current click', currentClickedCell)
+        // Remove styling from the previously clicked cell
+        removeHighlight(currentClickedCell)
+        removePossibleHighlight()
       }
-  
-      // Update the currently clicked cell and high light cell
-      currentClickedCell = clickedCell
-    }
+
+      // Check if the clickedCell is not null
+      if (clickedCell) {
+
+        //debugger
+        const pos = clickedCell.querySelector('span')
+
+        if (pos) {
+          
+          // Code for handling clicks on pos
+          //console.log('Click on piece', pos)
+          const cellId = clickedCell.getAttribute('id')
+          //console.log('from', cellId)
+          addHighlight(clickedCell)
+          try {
+            const result = await sendRequestGetPossibleMoves(fen, cellId)
+            console.log('result', result) 
+
+            resolve(result)
+          } catch (err) {
+            console.log('err', err)
+            reject(err)
+          }
+
+          //Assuming the response contains an array of possible moves
+          //const possibleMoves = data.possible_moves
+          // console.log('possible move', possibleMoves)
+        } else {
+          // Code for handling clicks on empty cells
+          console.log('Click on empty cell', clickedCell)
+        }
+
+        // Update the currently clicked cell and high light cell
+        currentClickedCell = clickedCell
+      }
+    })
   })
 }
 
 // Function to add highlighting to the cell
 function addHighlight(cell) {
- console.log('cell', cell)
+  console.log('cell', cell)
   cell.classList.add('highlight-overlay')
 }
 
@@ -151,30 +139,24 @@ function removePossibleHighlight() {
   })
 }
 
-async function sendRequestGetPossibleMoves(fen,cellId){
+async function sendRequestGetPossibleMoves(fen, cellId) {
   // Make a POST request to the server when a piece is clicked
-        const response = await fetch('/chessboard/possibleMoves', {
-          method: 'POST',
-          headers: {
-            'Content-Type':'application/json'
-          },
-          body: JSON.stringify({fen: fen, pos: cellId})
-        })
-        const data = await response.json() // Assuming the response is in JSON format
-        // response from server: 
-        // {
-        //   "possible_moves": [
-        // {
-        //     "board_before_move": {
-        //         "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-        //     },
-        //console.log("response from server: ", data )
-        const highLightArr = data.possible_moves.map((move) => move.to)
-        console.log('possible move', highLightArr)
-        for (let i = 0; i < highLightArr.length; i++){
-          console.log('arr', highLightArr[i])
-          addPossibleHighLight(document.getElementById(highLightArr[i]))
-        }
-        
+  const response = await fetch('/chessboard/possibleMoves', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ fen: fen, pos: cellId }),
+  })
+  const data = await response.json() // Assuming the response is in JSON format
 
+  const highLightArr = data.possible_moves.map((move) => move.to)
+  //console.log('possible move', highLightArr)
+  for (let i = 0; i < highLightArr.length; i++) {
+   // console.log('arr', highLightArr[i])
+    addPossibleHighLight(document.getElementById(highLightArr[i]))
+  }
+  return data
 }
+
+
