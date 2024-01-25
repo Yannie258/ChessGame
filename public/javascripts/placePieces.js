@@ -1,3 +1,4 @@
+import { sendRequestGetPossibleMoves, sendMoveToServerForPlaying } from './helper.js'
 //Enum Using Objects
 const encodeFen = {
   r: '♜',
@@ -43,16 +44,6 @@ function placePieces(fen) {
       setPieces.innerHTML = piece
     }
   }
-
-  // listen click event in whole table
-  // important when we move to the possible position later on
-  const chessBoard = document.querySelectorAll('.chess-board')
-
-  // Variable to keep track of the currently clicked cell
-  let currentClickedCell = null
-  chessBoard.forEach((cell) => {
-    handleCellClick(cell, currentClickedCell, fen)
-  })
 }
 
 //expand amount of consecate empty cells based on number
@@ -66,60 +57,66 @@ function getSinglePiece(char) {
 }
 
 function handleCellClick(cell, currentClickedCell, fen) {
-  return new Promise((resolve, reject) => {
+  console.log('cell',cell)
+  let storePossibleMoves = null;
+  console.log('store', storePossibleMoves)
     cell.addEventListener('click', async (event) => {
       const clickedCell = event.target.closest('td')
 
-      //TODO: soth went wrong when click on cell , which is on highlight, just print out the old pos
       if (currentClickedCell) {
-        
-        console.log('current click', currentClickedCell)
-        // Remove styling from the previously clicked cell
+        // Remove styling from the previously clicked cell, 
+        //either remove for the click in same position
         removeHighlight(currentClickedCell)
         removePossibleHighlight()
+
       }
 
-      // Check if the clickedCell is not null
+      // Check if the clicked to Cell is catched
       if (clickedCell) {
-
-        //debugger
+        const cellId = clickedCell.getAttribute('id')
+        console.log('Click on cell', cellId)
+        // cell contains pieces
         const pos = clickedCell.querySelector('span')
-
-        if (pos) {
-          
-          // Code for handling clicks on pos
-          //console.log('Click on piece', pos)
-          const cellId = clickedCell.getAttribute('id')
-          //console.log('from', cellId)
+        //request possible moves
+        let result = await sendRequestGetPossibleMoves(fen, cellId)
+        
+        // if click to cell contains piece
+        if (pos) {         
+          //highlight current piece pos
           addHighlight(clickedCell)
-          try {
-            const result = await sendRequestGetPossibleMoves(fen, cellId)
-            console.log('result', result) 
-
-            resolve(result)
-          } catch (err) {
-            console.log('err', err)
-            reject(err)
+          // highlight possible moves from server response
+          const highLightArr = result.possible_moves.map((move) => move.to)
+          //console.log('possible move', highLightArr)
+          for (let i = 0; i < highLightArr.length; i++) {
+            // console.log('arr', highLightArr[i])
+            addPossibleHighLight(document.getElementById(highLightArr[i]))
           }
-
-          //Assuming the response contains an array of possible moves
-          //const possibleMoves = data.possible_moves
-          // console.log('possible move', possibleMoves)
+          console.log('result', result.possible_moves)
+          storePossibleMoves = result
+         
         } else {
-          // Code for handling clicks on empty cells
+          // when click to an empty cell without piece
+          //places piece to right position base on new fen (board_aftermove ) 
+          //console.log('else', storePossibleMoves) // empty because of validation possible move for empty cell 
           console.log('Click on empty cell', clickedCell)
+          const newPos = storePossibleMoves.possible_moves.filter((el)=>el.to === clickedCell.getAttribute('id'))
+          console.log('pos', newPos)
+          placePieces(newPos[0].board_after_move.fen)
+
+          //TODO: implement Play to send actual board (fen) and receive new board from server
+          
         }
 
         // Update the currently clicked cell and high light cell
         currentClickedCell = clickedCell
       }
     })
-  })
+  
 }
 
 // Function to add highlighting to the cell
 function addHighlight(cell) {
-  console.log('cell', cell)
+  console.log('cell click', cell)
   cell.classList.add('highlight-overlay')
 }
 
@@ -139,24 +136,35 @@ function removePossibleHighlight() {
   })
 }
 
-async function sendRequestGetPossibleMoves(fen, cellId) {
-  // Make a POST request to the server when a piece is clicked
-  const response = await fetch('/chessboard/possibleMoves', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ fen: fen, pos: cellId }),
-  })
-  const data = await response.json() // Assuming the response is in JSON format
+document.addEventListener('DOMContentLoaded', async function () {
+   const pov = 'white'
+   const initFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+   try {
+     // get element with id = chess-container in html view
+     const chessboardContainer = document.getElementById('chess-container')
 
-  const highLightArr = data.possible_moves.map((move) => move.to)
-  //console.log('possible move', highLightArr)
-  for (let i = 0; i < highLightArr.length; i++) {
-   // console.log('arr', highLightArr[i])
-    addPossibleHighLight(document.getElementById(highLightArr[i]))
+     // fetch data by sending request with pov parameter, then route will send the res of table side over '/', then implement placePieces()
+     //In the context of the fetch function, if we don't specify the method, it defaults to a GET request.
+     const response = await fetch(`/?pov=${pov}`)
+     const chessboardHTML = await response.text()
+     // chessboardHTML is the response from the server
+     // console.log('test', chessboardHTML)
+
+     // Client gets the chessboard from the server and places the pieces with FEN
+     chessboardContainer.innerHTML = chessboardHTML
+     // Call a function to place pieces here (not implemented in this snippet)
+     await placePieces(initFen)
+   } catch (error) {
+     console.error('Error fetching chessboard:', error)
   }
-  return data
-}
+  
+  // listen click event in whole table
+  // important when we move to the possible position later on
+  const chessBoard = document.querySelectorAll('.chess-board')
 
-
+  // Variable to keep track of the currently clicked cell
+  let currentClickedCell = null
+  chessBoard.forEach((cell) => {
+    handleCellClick(cell, currentClickedCell, initFen)
+  })
+ })

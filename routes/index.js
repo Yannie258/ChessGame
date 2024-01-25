@@ -11,8 +11,8 @@ app.use(express.static('public'))
 router.get('/chessBoard', function (req, res, next) {
   res.setHeader('Cache-Control', 'no-store')
 
-  console.log("res",res);
-  console.log(req);
+  console.log('res', res)
+  console.log(req)
   //index.hbs
   res.render('index')
 })
@@ -20,7 +20,7 @@ router.get('/chessBoard', function (req, res, next) {
 /* GET home page. */
 
 router.get('/', function (req, res) {
-res.setHeader('Cache-Control', 'no-store')
+  res.setHeader('Cache-Control', 'no-store')
 
   // get {pov} from client
   // Default  POV = 'white' if user does not provide
@@ -39,13 +39,13 @@ res.setHeader('Cache-Control', 'no-store')
 router.post('/chessBoard/possibleMoves', function (req, res, next) {
   // send request body with pos is data we need to check
   //const fen = req.body.fen
-   //const position = req.body.pos
+  //const position = req.body.pos
   //shorthand:
   //{} : object define
   const { fen, pos } = req.body
 
-  console.log('get fen from client', {fen,pos})
-   res.setHeader('Cache-Control', 'no-store')  
+  console.log('get fen from client', { fen, pos })
+  res.setHeader('Cache-Control', 'no-store')
   // should call grpc here to get real possible moves from extern server
 
   grpcClient.grpcClient.getPossibleMoves({ current_board: { fen }, from: pos }, (err, grpcResponse) => {
@@ -55,13 +55,23 @@ router.post('/chessBoard/possibleMoves', function (req, res, next) {
     } else {
       console.log('Response from gRPC server:', grpcResponse.possible_moves)
       const possible_moves = grpcResponse.possible_moves
-      // message GetPossibleMovesResponse{repeated Move possible_moves = 1;} 
+      // message GetPossibleMovesResponse{repeated Move possible_moves = 1;}
       res.json({ possible_moves: possible_moves })
     }
- 
   })
-
 })
 
+
+router.post('/chessboard/moves', function (req, res, next) {
+  const  moves  = req.body
+
+  res.setHeader('Cache-Control', 'no-store')
+  // should call grpc here to get real possible moves from extern server
+  if (err) {
+    console.error('Error:', err)
+    res.status(500).send('Server Error')
+  }
+  res.json(moves )
+})
 
 module.exports = router

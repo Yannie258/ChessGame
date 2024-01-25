@@ -156,8 +156,6 @@ td::before {
 .highlight-overlay-move{
   background-color: var(--move-high-light) !important;
   opacity: 0.9;
-  z-index: -1;
-  pointer-events: none; /* Allow clicks to pass through */
 }
 
 
