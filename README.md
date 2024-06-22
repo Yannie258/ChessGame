@@ -1,7 +1,4 @@
-# run:
+# DDS_chess-game
 
-nodemon start
-
-# open in local
-
-localhost:3000
+1. run with `nodemon run start`
+2. go to http://localhost:3000/?pov=white

@@ -1,0 +1,131 @@
+<!-- in terminal run: simplehttpserver To server static files-->
+<!DOCTYPE html>
+<html lang="de-DE">
+
+<head>
+    <meta charset="UTF-8" />
+    <style>
+        body {
+            font: 15px normal Arial, sans-serif;
+            color: #000000;
+        }
+
+        label {
+            width: 5em;
+            display: inline-block;
+        }
+
+        ul {
+            padding: 0;
+        }
+    </style>
+    <script>
+        const loadAllEntries = async () => {
+            const guestbookList = document.querySelector('ul');
+            guestbookList.innerHTML = "";
+            //use async function/await fetch or fetch...then
+            /**
+             * async/await:
+             * async function loadEntries() {
+                try {
+                    const response = await fetch('https://vsr.informatik.tu-chemnitz.de/edu/evs/ajax/guestbook');
+                    const data = await response.json();
+                    console.log("Data received", data);
+
+                    const ul = document.querySelector('ul');
+                    ul.innerHTML = '';
+                    data.forEach(element => {
+                        const listItem = document.createElement("li");
+                        listItem.innerHTML = `<b>${element.name}:</b> ${element.text} <a href="#" onclick="deleteEntry(${element.id},event)">(X)</a>`;
+                        guestbookList.appendChild(listItem);
+                    })
+                } catch (error) {
+                    console.error('Error loading entries:', error);
+                }
+            }
+
+            */
+            fetch('https://vsr.informatik.tu-chemnitz.de/edu/evs/ajax/guestbook', {
+                method: 'GET',
+            })
+                .then(res => {
+                    //console.log(res.json()) // json() can be called just one time
+                    return res.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    data.forEach(element => {
+                        const listItem = document.createElement("li");
+                        listItem.innerHTML = `<b>${element.name}:</b> ${element.text} <a href="#" onclick="deleteEntry(${element.id},event)">(X)</a>`;
+                        guestbookList.appendChild(listItem);
+                    })
+
+                })
+                .catch(e => console.log(e))
+        }
+
+        function deleteEntry(entryId, event) {
+            fetch(`https://vsr.informatik.tu-chemnitz.de/edu/evs/ajax/guestbook?id=${entryId}`, {
+                method: 'DELETE',
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    loadAllEntries();
+                })
+                .catch(error => console.error(error));
+        }
+
+        function addEntry() {
+            let nameInput = document.getElementById("name");
+            let textInput = document.getElementById("text");
+            let name = nameInput.value;
+            let text = textInput.value;
+            fetch(`https://vsr.informatik.tu-chemnitz.de/edu/evs/ajax/guestbook`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `name=${encodeURIComponent(name)}&text=${encodeURIComponent(text)}`
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    loadAllEntries();
+                    nameInput.value = '';
+                    textInput.value = '';
+                })
+                .catch(error => console.error(error));
+        }
+
+        document.addEventListener("DOMContentLoaded", loadAllEntries);
+
+    </script>
+</head>
+
+<body>
+    <h1>Guestbook</h1>
+    <ul>
+        <li><b>TestUser:</b> This is an example entry. <a href="#" alt="Delete entry">(X)</a></li>
+        <li><b>TestUser2:</b> This is another example entry. <a href="#" alt="Delete entry">(X)</a></li>
+    </ul>
+    <hr>
+    <form method="POST" action="https://vsr.informatik.tu-chemnitz.de/edu/evs/ajax/guestbook"
+        onsubmit="addEntry();return false;">
+        <label for="name">Name</label> <input id="name" type="text" name="name" placeholder="Name"><br>
+        <label for="text">Text</label> <input id="text" type="text" name="text" placeholder="Text"><br>
+        <button type="submit">Add entry</button>
+    </form>
+</body>
+
+</html>

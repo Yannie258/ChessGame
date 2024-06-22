@@ -1,0 +1,90 @@
+:root {
+  --square-size: calc((100vw - 100px) / 8);
+  --board-size : calc(var(--square-size) * 8);
+}
+
+@media (max-width: 400px) {
+  :root {
+    --square-size: calc((100vw - var(--layout-padding-inline) * 2) / 8);
+  }
+}
+
+@media (orientation: landscape) {
+  :root {
+    --square-size: calc((100vh - var(--layout-padding-inline) * 2) / 8);
+  }
+}
+
+
+.chess-table {
+  width          : var(--board-size);
+  height         : var(--board-size);
+  margin-block   : 25px 50px;
+  margin-inline  : auto;
+  border-collapse: collapse;
+  table-layout   : fixed;
+  /* Ensure that table layout does not change due to content */
+}
+
+.chess-piece {
+  font-size  : calc(var(--square-size) / 1.5);
+  line-height: 1;
+  user-select: none;
+}
+
+/* set suitable position for squareID when piece is appeared in the same cell */
+.chess-table td {
+  display       : table-cell;
+  position      : relative;
+  width         : var(--square-size);
+  height        : var(--square-size);
+  min-width     : var(--square-size);
+  min-height    : var(--square-size);
+  text-align    : center;
+  vertical-align: middle;
+}
+
+.chess-table td::before {
+  content  : attr(id);
+  position : absolute;
+  top      : 5px;
+  left     : 5px;
+  font-size: calc(var(--square-size) / 6);
+  color    : var(--color-dimgray);
+  z-index  : 1;
+}
+
+.chess-table tr:nth-child(odd) td:nth-child(even),
+.chess-table tr:nth-child(even) td:nth-child(odd) {
+  background-color: var(--color-green);
+}
+
+.chess-table tr:nth-child(odd) td:nth-child(odd),
+.chess-table tr:nth-child(even) td:nth-child(even) {
+  background-color: var(--color-blue);
+}
+
+.highlight {
+  background-color: var(--color-highlight) !important;
+}
+
+.selected {
+  background-color: var(--color-selected) !important;
+}
+
+.chess-table.opponent-move {
+  pointer-events: none;
+}
+
+/* stopwatch */
+.stopwatch {
+  margin-top     : 25px;
+  display        : flex;
+  justify-content: flex-end;
+}
+
+.stopwatch table,
+.stopwatch th,
+.stopwatch td {
+  border: 1px solid;
+}

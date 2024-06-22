@@ -1,0 +1,25 @@
+.chat-wrapper {
+  max-height     : 50vh;
+  list-style-type: none;
+  padding        : 0;
+  overflow-y     : scroll;
+}
+
+.chat-message {
+  background-color: var(--color-blue);
+  border-radius   : 20px;
+  padding         : 0.25rem 1rem;
+  margin-bottom   : 1rem;
+  display         : flex;
+  justify-content : space-between;
+  gap             : 1rem;
+  max-width       : 300px;
+  line-break      : anywhere;
+  overflow-x      : hidden;
+}
+
+.chat-message-time {
+  color      : var(--color-dimgray);
+  user-select: none;
+  line-break : auto;
+}

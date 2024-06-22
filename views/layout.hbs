@@ -1,21 +1,52 @@
 <html>
+  <head>
+    <title>{{title}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/stylesheets/globals.css" />
+    <link rel="stylesheet" href="/stylesheets/game.css" />
+    <link rel="stylesheet" href="/stylesheets/chat.css" />
+    <link rel='shortcut icon' href='favicon.ico' />
+  </head>
 
-<head>
-  <title>Chess Game</title>
-  <link rel='stylesheet' href='/stylesheets/style.css' />
-</head>
+  <body class="body">
+    <script type="module" src="/javascripts/config.js"></script>
+    <script type="module" src="/javascripts/chessBoard.js"></script>
+    <script type="module" src="/javascripts/apiClient.js"></script>
+    <script type="module" src="/javascripts/stopwatch.js"></script>
+    <header class="header">
+      <nav class="top-nav">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/play">Play</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/about">About</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main class="main">
+      <div class="stopwatch">
+        <table>
+          <tbody>
+            <tr>
+              <th>Player</th>
+              <th>Opponent</th>
+            </tr>
+            <tr>
+              <td><stop-watch time='60:00' id="player-stopwatch"></stop-watch></td>
+              <td><stop-watch time='60:00' id="opponent-stopwatch"></stop-watch></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-<body> 
-  <script type="module" src='javascripts/placePieces.js'>
-  </script>
-
-  
-  <nav id='sidebar'>
-    <a href=''>Home</a>
-
-    <a href=''>News</a>
-  </nav>
-  {{{body}}}
-</body>
+      {{{body}}}
+    </main>
+    <aside>
+      {{> chat}}
+    </aside>
+    <footer class="footer">
+      <p>All rights reserved © International Chess</p>
+    </footer>
+  </body>
 
 </html>
